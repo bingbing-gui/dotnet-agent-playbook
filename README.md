@@ -1,259 +1,63 @@
+# dotnet-platform
 
-# .NET 介绍
+一个面向实战的 **“.NET → AI Agent”** 演进仓库：  
+用文档讲清架构思路，用代码样例落地工程实践。
 
-我维护的这个仓库，旨在系统性梳理 新一代 .NET 平台的整体能力与应用版图，内容并不局限于某一个框架或技术点，而是从 应用程序形态（Application Models） 的视角出发，去理解 .NET 如何横跨 Web、客户端、云原生、AI 等不同场景。
+## 仓库定位
 
-欢迎大家 Star 该仓库，以便及时获取更新通知。
+- **核心主线：AI Agent（持续更新）**
+  - Agent Framework
+  - Semantic Kernel
+  - Provider/模型接入（含 Foundry / DeepSeek 等相关实践）
+- **历史沉淀：Foundation（已归档）**
+  - 早期 ASP.NET Core / WebAPI / MVC 等基础内容，保留参考价值，不再作为主线扩展
 
+## 当前目录结构
 
-## 什么是 .NET？
-.NET 是一个由微软支持的、免费且开源的应用程序平台。  
-它是一个安全、可靠且高性能的应用平台，适用于现代软件开发的各种场景。
-.NET 不仅仅是一门语言或一个框架，而是一整套涵盖 运行时、语言、标准库、工具链与工程实践 的统一平台。
+```text
+docs/
+├─ ai-agent/
+│  ├─ Agent-Framework/
+│  └─ Semantic-Kernel/
+├─ overview/
+└─ _archive/
 
-## C# 与.NET
+src/
+├─ ai-agent/
+│  ├─ Agent-Framework/
+│  ├─ Semantic-Kernel/
+│  └─ Azure-AI-Foundry-SDK/
+└─ _archive/
+```
 
-C# 是 .NET 平台的主要编程语言。  
-它是一门强类型（Strongly-typed）、类型安全（Type-safe）的语言，内置：
-- 并发支持（Concurrency）
-- 自动内存管理（Automatic Memory Management）
+## 如何阅读（推荐路径）
 
-C# 既支持高层抽象（如以数据为中心的 records），也支持底层能力（如函数指针），兼顾安全性与性能。
+1. `docs/ai-agent/Agent-Framework/`  
+2. `docs/ai-agent/Semantic-Kernel/`  
+3. 对照 `src/ai-agent/` 中对应目录运行示例
 
-## 跨平台（Cross Platform）
+如果你只关心最新主线，请优先阅读 `docs/ai-agent/`，`_archive` 仅作历史参考。
 
-.NET 支持多个操作系统，包括：
-- Windows
-- Linux
-- macOS
-- Android
-- Apple 平台（iOS / macOS）
+## docs 与 src 的对应规则
 
-同时也广泛运行于 Linux 发行版中，例如：
-- Red Hat Enterprise Linux
-- Ubuntu
+- 文档在 `docs/ai-agent/*`，示例在 `src/ai-agent/*`
+- 优先按“篇号/主题”对应（同主题同编号）
+- 在 Agent Framework 中，已提供总索引：
+  - `docs/ai-agent/Agent-Framework/第99篇-Agent Framework 基础篇 - 32篇.md`
 
-一次学习，多端运行。
+## 你可以从这里开始
 
-## 标准库与生态（Libraries）
+- Agent Framework 文档：`docs/ai-agent/Agent-Framework/`
+- Semantic Kernel 文档：`docs/ai-agent/Semantic-Kernel/`
+- Agent Framework 示例：`src/ai-agent/Agent-Framework/`
+- Semantic Kernel 示例：`src/ai-agent/Semantic-Kernel/`
 
-.NET 内置了丰富的标准库和 API，覆盖范围包括：
-- 集合（Collections）
-- 网络（Networking）
-- 文件系统
-- 数据处理
-- 机器学习（Machine Learning）
+## 更新策略
 
-.NET 使用 NuGet 作为包管理器，目前拥有 30 万+ 开源包，覆盖几乎所有开发场景。
+- 主线内容只在 `ai-agent` 下持续迭代
+- 历史或不再维护内容移入 `_archive`
+- 新增内容优先遵循“文档 + 示例”成对提交
 
-## 应用模型（Application Models）
+## 仓库地址
 
-应用模型描述的是 .NET 如何在不同应用形态下组织代码、运行时能力与工程实践。
-它不是简单的技术分类，而是围绕 Web、客户端、云、AI、设备等场景，形成的一组成熟、可组合、可长期演进的开发模型。
-
-### Web
-
-ASP.NET Core 是 .NET 面向 Web 的核心应用模型，覆盖从传统网站、REST API 到实时通信、云原生服务的完整场景。
-
-- 统一运行时与工具链：使用 C# 构建高性能、跨平台 Web 应用，在 Windows、Linux、macOS 上保持一致的部署体验。
-- 内置架构能力：中间件管道、依赖注入、配置系统、日志体系，帮助大型应用划清边界。
-- 云原生友好：对容器化、反向代理、云平台与微服务架构的原生支持，可支撑高并发与大规模系统。
-
-### Mobile
-
-.NET MAUI 是面向移动端与客户端应用的统一 UI 框架。
-
-- 一套代码与项目结构，面向 iOS、Android、Windows、macOS。
-- 原生性能与平台体验，提升代码复用率与一致的开发体验。
-- 界面层、业务逻辑与平台能力在同一技术栈中协同。
-
-### Desktop
-
-Desktop 是 .NET 面向高性能本地体验的重要组成部分。
-
-- 在 Windows 与 macOS 上构建原生桌面应用，共享业务逻辑、数据访问与基础设施。
-- 应用模型覆盖：.NET MAUI、Blazor Hybrid、WinUI/Windows App SDK 等。
-- 既支持传统桌面形态，也支持 Web 技术与原生能力的融合。
-
-### 人工智能与机器学习
-
-在 AI / ML 方向，.NET 为开发者提供了一套从传统机器学习到生成式 AI、再到智能代理系统的完整能力体系，使团队能够在熟悉的 C# 与 .NET 生态中，按需组合不同层级的智能能力。
-
-### 生成式 AI 与智能代理（LLM / Agent）
-
-- 深度整合 Azure AI、OpenAI 与主流开源模型生态，支持在应用中引入大型语言模型（LLM）与小型语言模型（SLM），将智能推理、内容生成、语义搜索与自然语言交互无缝集成到现有系统。
-- 覆盖：模型选择、向量检索（RAG）、推理调用、安全治理与可观测性。
-- 适用于：对话系统、知识问答、智能助理与自动化流程。
-
-关键组件：
-- Semantic Kernel：提供以“意图、函数与上下文”为中心的编排模型，用于将语言模型与业务代码、插件及外部系统安全组合，实现可控、可扩展的智能能力。
-- Microsoft Agent Framework：在此基础上进一步引入代理（Agent）、工具调用、对话状态与执行策略等抽象，用于构建具备长期记忆、多轮交互与协作能力的 AI 应用，将“模型调用”升级为“可运行的智能系统”。
-
-#### 传统机器学习（Classical ML）
-
-- .NET 同样重视传统机器学习在工程系统中的长期价值。通过 ML.NET 与 Azure Machine Learning，开发者可以在 .NET 应用中构建和集成：
-    - 分类、回归、聚类、推荐与异常检测模型
-    - 面向结构化数据、日志、时序数据的预测能力
-    - 可解释、低成本、可离线运行的机器学习模型
-- 典型场景与协同：
-    - 适合业务规则明确、数据结构稳定、对成本与可解释性要求较高的场景
-    - 与生成式 AI 互补：使用 ML 模型进行预测与评分；使用 LLM 负责解释结果、生成报告或自然语言交互
-
-### 云计算（Cloud）
-
-在 .NET 的云计算应用模型中，.NET Aspire 提供面向云原生应用的工程化开发方式。
-
-- 覆盖完整生命周期：本地构建、运行与调试，到容器化与云端部署。
-- 显式建模服务依赖，内置日志、指标与分布式追踪，便于在本地验证复杂拓扑。
-- 与云平台解耦：可部署到 Azure、AWS、Google Cloud 或自有基础设施，适合持续交付与长期演进。
-
-### 微服务（Microservices）
-
-微服务是用于构建可独立部署、可水平扩展、高可靠系统的架构方式。
-
-- 常用技术栈：ASP.NET Core + REST/gRPC，天然支持容器化，官方 Docker 镜像与工具链完善。
-- 多语言互操作：.NET 微服务可与 Node.js、Java、Go 等并存，组成多语言系统。
-- 性能与稳定性：适合高并发 API 场景；结合容器平台、云基础设施与 .NET Aspire 提供完整工程体系。
-
-### 游戏开发
-
-在游戏开发中，.NET 主要用于引擎脚本、开发工具与在线服务。
-
-- 广泛用于 Unity 等主流引擎，以 C# 提供安全、跨平台脚本能力，覆盖 PC、移动、主机、VR/AR。
-- 常见在线服务：账号系统、排行榜、匹配、云存档与运营后台。
-- 统一技术栈贯穿游戏本体、在线服务与管理系统。
-
-### 物联网（IoT）
-
-IoT 是 .NET 的重要应用方向之一。
-
-- 一致的编程体验：使用同一套语言、工具与库，覆盖设备端、边缘与云端的端到端方案。
-- 多种硬件环境：从微控制器、单板计算机到边缘设备均可运行。
-- 云端集成：与 Azure IoT 等平台无缝集成，覆盖设备控制、边缘计算、数据采集与云端管理。
-
-## 开源社区与生态规模
-
-- 100,000+ 开源贡献
-- 3,700+ 参与贡献的公司
-- 拥有全球活跃开发者社区
-
-.NET 是完全开源的，并由 The .NET Foundation 管理。  
-这是一个独立组织，致力于推动 .NET 生态的开放协作。  
-你可以在 GitHub、Stack Overflow 等平台中获得大量社区支持。
-
-
-## 工具链（Tools）
-
-.NET 提供完整、成熟的开发工具：
-- .NET CLI
-- Visual Studio
-- Visual Studio Code
-- 跨平台构建与调试工具
-
-同时可以方便地结合 GitHub Actions 等 CI/CD 工具，将应用持续部署到云端。
-
-## 为什么选择 .NET？
-
-### 高效生产力（Productive）
-
-- 先进语言特性：
-    - 泛型（Generics）
-    - LINQ
-    - 异步编程（Async/Await）
-- 丰富类库与多语言支持，显著提升开发效率。
-- Visual Studio 系列提供卓越开发体验；免费开发者计划提供构建与部署所需资源，支持跨平台运行。
-- .NET 致力于生产力、性能、安全性与可靠性；加入 .NET 开发者社区。
-
-### 任意应用 · 任意平台（Any app, any platform）
-- 使用 .NET 可构建任何类型的应用，并运行于任何平台。
-- 在熟悉的开发环境中：
-    - 复用技能
-    - 共享代码
-    - 降低开发与维护成本
-- 适用场景：
-    - 移动应用：iOS / Android / Windows
-    - 企业级服务：Windows Server / Linux
-    - 云端高并发微服务
-- .NET 提供完整解决方案。
-
-### 深受开发者喜爱（Loved by developers）
-
-- 现代、创新、完全开源的平台。
-- 在 Stack Overflow 等开发者社区调查中，.NET 长期位居最受开发者喜爱的框架行列。
-- 越来越多创业公司选择 .NET 与 Blazor 构建核心业务系统。
-
-### 性能真正关键的地方（Performance where it matters）
-- .NET 非常快。
-- 带来：
-    - 更低响应时间
-    - 更少资源消耗
-    - 更高系统吞吐
-- TechEmpower 基准测试示例：
-    - .NET：702 万请求/秒
-    - Node.js：60 万请求/秒
-    - Java Servlet：220 万请求/秒
-- 涵盖 JSON 序列化、数据库访问、服务端模板渲染等真实场景。
-
-### 值得信赖与安全（Trusted and secure）
-- 由 Microsoft 官方支持，获成千上万家企业与数百万开发者信任。
-- 发现安全威胁后快速发布安全更新，保障系统稳定运行。
-
-### 庞大生态系统（Large ecosystem）
-- 全球 500 万+ .NET 开发者
-- 海量 NuGet 开源库
-- Visual Studio Marketplace 扩展生态
-- 活跃的 MVP 与官方支持体系
-- 轻松获取社区答案、库、工具与经验。
-
-### 真正的开源（Open source）
-- 由 The .NET Foundation 支持的独立非营利组织，推动开放、友好的 .NET 开源生态。
-- 已获得：
-    - 100,000+ 开源贡献
-    - 3,700+ 非微软公司参与
-- Google、JetBrains、Red Hat、Samsung、Unity 等共同参与指导 .NET 的发展方向。
-
-## 正在使用 .NET 的知名公司（按领域分类）
-
-以下为公开案例/公开分享/官方展示中可见的 .NET 相关实践。
-
-### 🧠 AI / 开发者工具
-- Microsoft Copilot（公开分享中可见 .NET 相关服务实践）
-- GitHub / Visual Studio（与 .NET 工具链深度集成）
-
-### ☁️ 云服务 / 企业级系统
-- Fidelity Investments（公开资料中可见 .NET MAUI 等跨平台实践）
-- H&R Block（公开案例中可见 .NET + Azure/AI 的应用）
-- Blip（公开案例中可见 Azure OpenAI + .NET 的组合实践）
-
-### 🎮 游戏 / 娱乐 / 体育
-- Xbox（公开分享中可见 .NET Aspire/云原生相关实践）
-- NBC Sports Next（公开案例中可见 .NET MAUI 跨平台实践）
-
-### 🌍 工业 / 可持续发展
-- Vestas（公开案例中可见 .NET + Azure 的工业数字化实践）
-
-### 🧗 户外 / 移动应用
-- Redpoint（公开案例中可见 .NET MAUI 跨平台实践）
-
-### 🍔 零售 / 消费互联网
-- Chipotle（公开案例中可见 ASP.NET Core + 云的实践）
-
-### 💬 技术社区 / 平台级产品
-- Stack Overflow（ASP.NET 体系长期实践广为人知）
-- Geocaching（公开案例中可见 .NET Web API 的实践）
-
-
-
-
-## 结语
-
-.NET 是一个面向未来的软件开发平台。
-它通过统一的运行时、语言、标准库与工具链，将 Web、移动端、桌面、云原生、人工智能、微服务与物联网 等不同应用形态，整合在同一工程体系之中。
-
-无论是构建高性能的企业级系统、可持续演进的云原生应用，还是融合传统机器学习与生成式 AI 的智能系统，.NET 都提供了成熟、可靠且可长期维护的解决方案。
-开发者可以在熟悉的 C# 与 .NET 生态中，按需选择合适的技术模型与能力层级，而无需在生产力、性能与安全性之间做出妥协。
-
-凭借完全开源的社区生态、强大的跨平台能力以及持续演进的工程实践，.NET 不仅适合“开始一个项目”，更适合 支撑一个系统长期稳定运行与持续成长。
-
-
-
+https://github.com/bingbing-gui/dotnet-platform

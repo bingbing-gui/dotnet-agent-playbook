@@ -3,7 +3,7 @@
 
 不过，在真实项目中，我们不一定只使用 Azure OpenAI。有时候也希望直接接入模型厂商自己的 API，例如 DeepSeek。
 
-AgentFramework 提供了 `OpenAIClient` 和 `AnthropicClient`，用于分别接入 OpenAI 和 Anthropic 的模型服务。而 DeepSeek API 刚好同时提供 OpenAI Chat Completions 兼容格式和 Anthropic Messages 兼容格式，因此我们可以借助这两条路径，把 `deepseek-v4-pro` 接入到 AgentFramework 中。
+Agent Framework 提供了 `OpenAIClient` 和 `AnthropicClient`，用于分别接入 OpenAI 和 Anthropic 的模型服务。而 DeepSeek API 刚好同时提供 OpenAI Chat Completions 兼容格式和 Anthropic Messages 兼容格式，因此我们可以借助这两条路径，把 `deepseek-v4-pro` 接入到 Agent Framework 中。
 
 
 为了演示 AgentFramework 接入原生 DeepSeek-v4-pro，笔者专门购买了 10 元的 DeepSeek-v4-pro 体验版来测试，所以大家多多支持，三连击（点赞、收藏、关注）哦。
