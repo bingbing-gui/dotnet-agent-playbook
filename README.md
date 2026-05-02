@@ -1,6 +1,7 @@
-# dotnet-platform
+# dotnet-agent-playbook
 
-一个面向实战的 **“.NET → AI Agent”** 演进仓库：  
+
+一个面向实战的 **“.NET → AI Agent”** 演进仓库： 
 用文档讲清架构思路，用代码样例落地工程实践。
 
 ## 仓库定位
