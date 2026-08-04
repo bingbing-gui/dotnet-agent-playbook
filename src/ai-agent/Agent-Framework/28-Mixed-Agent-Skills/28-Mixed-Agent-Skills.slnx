@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="28-Mixed-Agent-Skills-AzureOpenAI/28-Mixed-Agent-Skills-AzureOpenAI.csproj" />
+  <Project Path="28-Mixed-Agent-Skills-DeepSeek/28-Mixed-Agent-Skills-DeepSeek.csproj" />
   <Project Path="28-Mixed-Agent-Skills-Foundry/28-Mixed-Agent-Skills-Foundry.csproj" />
   <Project Path="28-Mixed-Agent-Skills/28-Mixed-Agent-Skills.csproj" />
 </Solution>

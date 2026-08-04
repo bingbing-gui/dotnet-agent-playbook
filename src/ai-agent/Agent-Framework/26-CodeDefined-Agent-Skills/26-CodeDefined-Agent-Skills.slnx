@@ -1,5 +1,7 @@
 <Solution>
   <Project Path="26-CodeDefined-Agent-Skills-AzureOpenAI/26-CodeDefined-Agent-Skills-AzureOpenAI.csproj" />
+  <Project Path="26-CodeDefined-Agent-Skills-DeepSeek/26-CodeDefined-Agent-Skills-DeepSeek.csproj" />
   <Project Path="26-CodeDefined-Agent-Skills-Foundry/26-CodeDefined-Agent-Skills-Foundry.csproj" />
   <Project Path="26-CodeDefined-Agent-Skills/26-CodeDefined-Agent-Skills.csproj" />
 </Solution>
+

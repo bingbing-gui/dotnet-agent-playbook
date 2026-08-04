@@ -1,4 +1,6 @@
 <Solution>
   <Project Path="25-FileBased-Agent-Skills-AzureOpenAI/25-FileBased-Agent-Skills-AzureOpenAI.csproj" />
+  <Project Path="25-FileBased-Agent-Skills-DeepSeek/25-FileBased-Agent-Skills-DeepSeek.csproj" />
   <Project Path="25-FileBased-Agent-Skills-Foundry/25-FileBased-Agent-Skills-Foundry.csproj" />
+  <Project Path="25-FileBased-Agent-Skills/25-FileBased-Agent-Skills.csproj" />
 </Solution>

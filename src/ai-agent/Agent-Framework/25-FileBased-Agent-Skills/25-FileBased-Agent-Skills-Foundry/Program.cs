@@ -45,7 +45,7 @@ Console.WriteLine("正在使用基于文件的技能进行单位转换");
 Console.WriteLine(new string('-', 60));
 
 AgentResponse response = await agent.RunAsync(
-    "请严格用脚本计算。马拉松（26.2 英里）等于多少公里？另外，75 千克等于多少磅？");
+    "将26.2 英里转换成公里。将75千克转换成磅。");
 
 Console.WriteLine($"Agent: {response.Text}");
 
@@ -80,35 +80,40 @@ static async Task<object?> RunAsync(
         WorkingDirectory = Path.GetDirectoryName(script.FullPath) ?? ".",
     };
 
-    if (interpreter is not null)
+    if (arguments is { ValueKind: JsonValueKind.Array } jsonArray)
     {
-        startInfo.FileName = interpreter;
-        startInfo.ArgumentList.Add(script.FullPath);
-    }
-    else
-    {
-        startInfo.FileName = script.FullPath;
-    }
-
-    if (arguments is { ValueKind: JsonValueKind.Array } json)
-    {
-        // Positional CLI arguments
-        foreach (var element in json.EnumerateArray())
+        foreach (JsonElement element in jsonArray.EnumerateArray())
         {
             if (element.ValueKind != JsonValueKind.String)
             {
                 throw new InvalidOperationException(
-                    $"错误: 文件型技能脚本只接受字符串类型的命令行参数，但收到的 JSON 元素类型为 '{element.ValueKind}'。 " +
-                    "所有数组元素必须是 JSON 字符串。");
+                    $"数组参数只能包含字符串，收到：{element.ValueKind}");
             }
+
             startInfo.ArgumentList.Add(element.GetString()!);
         }
     }
-    else if (arguments is not null && arguments.Value.ValueKind != JsonValueKind.Null && arguments.Value.ValueKind != JsonValueKind.Undefined)
+    else if (arguments is { ValueKind: JsonValueKind.Object } jsonObject)
+    {
+        if (!jsonObject.TryGetProperty("value", out JsonElement value) ||
+            !jsonObject.TryGetProperty("factor", out JsonElement factor))
+        {
+            throw new InvalidOperationException(
+                $"脚本参数必须包含 value 和 factor。实际参数：{jsonObject}");
+        }
+
+        startInfo.ArgumentList.Add("--value");
+        startInfo.ArgumentList.Add(value.ToString());
+
+        startInfo.ArgumentList.Add("--factor");
+        startInfo.ArgumentList.Add(factor.ToString());
+    }
+    else if (arguments is not null &&
+         arguments.Value.ValueKind is not JsonValueKind.Null
+             and not JsonValueKind.Undefined)
     {
         throw new InvalidOperationException(
-            $"错误: 预期一个 JSON 数组作为命令行参数，但收到的类型为 {arguments.Value.ValueKind}。 " +
-            "文件型技能脚本期望位置参数为 JSON 字符串数组。");
+            $"不支持的脚本参数类型：{arguments.Value.ValueKind}");
     }
 
     Process? process = null;
