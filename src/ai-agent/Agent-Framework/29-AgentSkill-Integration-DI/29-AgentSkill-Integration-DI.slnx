@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="29-AgentSkill-Integration-DI-AzureOpenAI/29-AgentSkill-Integration-DI-AzureOpenAI.csproj" />
+  <Project Path="29-AgentSkill-Integration-DI-DeepSeek/29-AgentSkill-Integration-DI-DeepSeek.csproj" />
   <Project Path="29-AgentSkill-Integration-DI-Foundry/29-AgentSkill-Integration-DI-Foundry.csproj" />
   <Project Path="29-AgentSkill-Integration-DI/29-AgentSkill-Integration-DI.csproj" />
 </Solution>
