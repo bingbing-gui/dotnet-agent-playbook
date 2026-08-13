@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="21-DeepSeekSkillsDemo/21-DeepSeekSkillsDemo.csproj" Id="181b43a5-7f7c-4447-9a78-4a49cd06c489" />
   <Project Path="27-ClassBased-Agent-Skills-AzureOpenAI/27-ClassBased-Agent-Skills-AzureOpenAI.csproj" />
   <Project Path="27-ClassBased-Agent-Skills-Foundry/27-ClassBased-Agent-Skills-Foundry.csproj" />
   <Project Path="27-ClassBased-Agent-Skills/27-ClassBased-Agent-Skills.csproj" />

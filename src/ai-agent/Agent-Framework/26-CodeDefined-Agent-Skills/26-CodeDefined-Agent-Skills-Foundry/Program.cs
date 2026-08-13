@@ -8,9 +8,10 @@
 // 2. 动态资源——通过工厂委托在运行时计算
 // 3. 代码脚本——可由代理直接调用的可执行委托
 
-using Azure.AI.Projects;
-using Azure.Identity;
 using Microsoft.Agents.AI;
+using Microsoft.Extensions.AI;
+using OpenAI;
+using System.ClientModel;
 using System.Text;
 using System.Text.Json;
 
@@ -19,10 +20,9 @@ Console.InputEncoding = Encoding.UTF8;
 Console.OutputEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
 // --- 配置 ---
-string endpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT")
-    ?? throw new InvalidOperationException("AZURE_OPENAI_ENDPOINT not set.");
-string deploymentName = Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_NAME")
-    ?? throw new InvalidOperationException("AZURE_OPENAI_DEPLOYMENT_NAME not set.");
+string endpoint = Environment.GetEnvironmentVariable("OPENAI_ENDPOINT") ?? throw new InvalidOperationException("AZURE_OPENAI_ENDPOINT is not set.");
+string modelId = Environment.GetEnvironmentVariable("OPENAI_MODEL_NAME") ?? "gpt-5.4-mini";
+string apikey = Environment.GetEnvironmentVariable("OPENAI_API_KEY") ?? throw new InvalidOperationException("OPENAI_API_KEY is not set.");
 
 // --- 构建代码定义的技能 ---
 #pragma warning disable MAAI001 
@@ -76,17 +76,32 @@ var skillsProvider = new AgentSkillsProvider(unitConverterSkill);
 
 // --- 代理设置 ---
 #pragma warning disable OPENAI001 
-AIAgent agent = new AIProjectClient(new Uri(endpoint), new DefaultAzureCredential())
-    .AsAIAgent(new ChatClientAgentOptions
+//AIAgent agent = new AIProjectClient(new Uri(endpoint), new DefaultAzureCredential())
+//    .AsAIAgent(new ChatClientAgentOptions
+//    {
+//        Name = "UnitConverterAgent",
+//        ChatOptions = new()
+//        {
+//            ModelId = modelId,
+//            Instructions = "你是一个乐于助人的助手，能够进行单位转换。",
+//        },
+//        AIContextProviders = [skillsProvider],
+//    });
+var openAIClient = new OpenAIClient(
+    new ApiKeyCredential(apikey),
+    new OpenAIClientOptions { Endpoint = new Uri(endpoint) });
+AIAgent agent = openAIClient.GetChatClient(modelId).AsIChatClient().AsAIAgent(
+    new ChatClientAgentOptions
     {
         Name = "UnitConverterAgent",
         ChatOptions = new()
         {
-            ModelId = deploymentName,
             Instructions = "你是一个乐于助人的助手，能够进行单位转换。",
         },
         AIContextProviders = [skillsProvider],
-    });
+    });   
+
+
 
 // --- 示例：单位转换 ---
 Console.WriteLine("使用代码定义的技能进行单位转换");

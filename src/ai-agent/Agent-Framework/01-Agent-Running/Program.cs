@@ -1,11 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
-
-// This sample shows how to create and use a simple AI agent with Azure OpenAI as the backend.
-
-using Azure.AI.OpenAI;
-using Azure.AI.Projects;
-using Azure.Identity;
-using Microsoft.Agents.AI;
+﻿using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 using OpenAI;
 using OpenAI.Chat;
@@ -13,17 +6,16 @@ using System.ClientModel;
 using System.ComponentModel;
 using System.Text;
 
-
 Console.InputEncoding = Encoding.UTF8;
-Console.OutputEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+Console.OutputEncoding = new UTF8Encoding(false);
 
-var endpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT") ?? throw new InvalidOperationException("AZURE_OPENAI_ENDPOINT is not set.");
-var modelId = Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_NAME") ?? "gpt-4o-mini";
-var apiKey = Environment.GetEnvironmentVariable("AZURE_OPENAI_ApiKey") ?? throw new InvalidOperationException("AZURE_OPENAI_API_KEY is not set.");
+var endpoint = Environment.GetEnvironmentVariable("OPENAI_ENDPOINT");
+var apikey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+var modelId = Environment.GetEnvironmentVariable("OPENAI_MODEL_NAME");
 
 #region Deepseek认证
 var openAiClient = new OpenAIClient(
-    new ApiKeyCredential(apiKey),
+    new ApiKeyCredential(apikey),
     new OpenAIClientOptions
     {
         // 重要：Endpoint 设置为 DeepSeek API 的地址，末尾不加 /v1

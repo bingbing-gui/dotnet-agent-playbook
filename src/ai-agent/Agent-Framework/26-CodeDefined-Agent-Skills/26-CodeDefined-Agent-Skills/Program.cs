@@ -11,7 +11,10 @@
 using Azure.AI.OpenAI;
 using Azure.Identity;
 using Microsoft.Agents.AI;
+using Microsoft.Extensions.AI;
+using OpenAI;
 using OpenAI.Responses;
+using System.ClientModel;
 using System.Text;
 using System.Text.Json;
 
@@ -20,10 +23,9 @@ Console.InputEncoding = Encoding.UTF8;
 Console.OutputEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
 // --- 配置 ---
-string endpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT")
-    ?? throw new InvalidOperationException("AZURE_OPENAI_ENDPOINT not set.");
-string deploymentName = Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_NAME")
-    ?? throw new InvalidOperationException("AZURE_OPENAI_DEPLOYMENT_NAME not set.");
+var endpoint = Environment.GetEnvironmentVariable("OPENAI_ENDPOINT");
+var apikey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+var modeId = Environment.GetEnvironmentVariable("OPENAI_MODEL_NAME");
 
 // --- 构建代码定义的技能 ---
 #pragma warning disable MAAI001 
@@ -77,19 +79,51 @@ var skillsProvider = new AgentSkillsProvider(unitConverterSkill);
 
 // --- 代理设置 ---
 #pragma warning disable OPENAI001 
-AIAgent agent = new AzureOpenAIClient(new Uri(endpoint), new AzureCliCredential())
-    .GetResponsesClient()
-    .AsAIAgent(new ChatClientAgentOptions
+//AIAgent agent = new AzureOpenAIClient(new Uri(endpoint), new AzureCliCredential())
+//    .GetResponsesClient()
+//    .AsAIAgent(new ChatClientAgentOptions
+//    {
+//        Name = "UnitConverterAgent",
+//        ChatOptions = new()
+//        {
+//            Instructions = "你是一个乐于助人的助手，能够进行单位转换。",
+//        },
+//        AIContextProviders = [skillsProvider],
+//    },
+//    model: modeId);
+
+var openAIClient = new OpenAIClient(
+    new ApiKeyCredential(apikey),
+    new OpenAIClientOptions { Endpoint = new Uri(endpoint) });
+IChatClient chatClient = openAIClient
+    .GetChatClient(modeId)
+    .AsIChatClient()
+    .AsBuilder()
+    .UseAIContextProviders(skillsProvider)   // ← 关键：在 IChatClient 管道层注册技能
+    .Build();
+AIAgent agent = chatClient
+    .AsAIAgent(
+    new ChatClientAgentOptions
     {
         Name = "UnitConverterAgent",
         ChatOptions = new()
         {
-            Instructions = "你是一个乐于助人的助手，能够进行单位转换。",
+            Instructions = """
+                你是一个乐于助人的助手，能够进行单位转换。
+                当用户要求进行单位转换时，必须使用 unit-converter 技能，通过读取 conversion-table 资源并使用 convert 脚本来计算结果。
+                不要自行心算，必须调用工具完成计算。
+                """,
         },
-        AIContextProviders = [skillsProvider],
-    },
-    model: deploymentName);
-#pragma warning restore OPENAI001 
+        //AIContextProviders = [skillsProvider],
+    }).AsBuilder()
+    .UseToolApproval(new ToolApprovalAgentOptions
+    {
+        // 自动审批只读操作（加载技能、读取资源）
+        // run_skill_script 仍需显式审批
+        AutoApprovalRules = [AgentSkillsProvider.AllToolsAutoApprovalRule],
+    })
+    .Build(); 
+#pragma warning restore OPENAI001
 
 // --- 示例：单位转换 ---
 Console.WriteLine("使用代码定义的技能进行单位转换");
@@ -98,8 +132,10 @@ Console.WriteLine(new string('-', 60));
 var stringBuilder = new StringBuilder();
 await foreach (var response in agent.RunStreamingAsync("请严格用脚本计算。马拉松（26.2 英里）等于多少公里？另外，75 千克等于多少磅？"))
 {
+    Console.Write(response.Text);
     stringBuilder.Append(response.Text);
 }
-Console.WriteLine(stringBuilder.ToString());
+Console.WriteLine(new string('*', 60));
+//Console.WriteLine(stringBuilder.ToString());
 Console.ReadLine();
 

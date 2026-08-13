@@ -14,9 +14,9 @@ try
     Console.InputEncoding = Encoding.UTF8;
     Console.OutputEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
-    var endpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT") ?? throw new InvalidOperationException("AZURE_OPENAI_ENDPOINT is not set.");
-    var modelId = Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_NAME") ?? "gpt-4o-mini";
-    var apiKey = Environment.GetEnvironmentVariable("AZURE_OPENAI_ApiKey") ?? throw new InvalidOperationException("AZURE_OPENAI_API_KEY is not set.");
+    var endpoint = Environment.GetEnvironmentVariable("OPENAI_ENDPOINT") ?? throw new InvalidOperationException("AZURE_OPENAI_ENDPOINT is not set.");
+    var modelId = Environment.GetEnvironmentVariable("OPENAI_MODEL_NAME") ?? "gpt-4o-mini";
+    var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY") ?? throw new InvalidOperationException("AZURE_OPENAI_API_KEY is not set.");
 
     // Initialize an A2ACardResolver to get an A2A agent card.
 
@@ -29,11 +29,16 @@ try
     AIAgent a2aAgent = agentCard.AsAIAgent();
 
     Console.WriteLine("==================== 远程调用 A2A ====================");
-    Console.WriteLine(await a2aAgent.RunAsync(" 解释什么是 A2A 协议"));    
+    //Console.WriteLine(await a2aAgent.RunAsync(" 解释什么是 A2A 协议"));
+    await foreach (var update in a2aAgent.RunStreamingAsync("解释什么是 A2A 协议"))
+    {
+        if (string.IsNullOrEmpty(update.Text)==false)
+            Console.Write(update.Text);
+    }
     Console.WriteLine(string.Concat(Enumerable.Repeat("=", 50)));
     Console.WriteLine("==================== 远程调用 A2A 结束====================");
 
-
+    Console.ReadLine();
     
     
     var callA2AAgent = AIFunctionFactory.Create(

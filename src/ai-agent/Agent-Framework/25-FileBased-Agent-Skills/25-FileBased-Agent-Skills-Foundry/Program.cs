@@ -1,163 +1,183 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
-using Azure.AI.Projects;
-using Azure.Identity;
+// Copyright (c) Microsoft. All rights reserved.
+
+// 本示例演示如何使用 OpenAIClient（非 Azure）对接基于文件的 Agent Skills。
+//
+// 【方案对比】
+// ❌ AIProjectClient（Azure.AI.Projects）→ 仅限 Azure AI Foundry，无法对接第三方 API
+// ✅ OpenAIClient（OpenAI SDK）→ 可对接任意兼容 OpenAI 格式的 API（DeepSeek/Kimi/Qwen 等）
+//
+// 本示例通过 OPENAI_ENDPOINT 环境变量指定任意兼容 API 的地址，
+// 通过 AIFunctionFactory.Create() 从磁盘文件手动创建技能工具并注册到 ChatOptions.Tools。
+//
+// Skills 遵循"渐进式加载（progressive disclosure）"的设计模式：
+// 1. 广播（Advertise）—— 在系统提示中提供技能的名称和描述
+// 2. 加载（Load）—— 在需要时通过 load_skill 工具加载完整的技能说明
+// 3. 读取资源（Read resources）—— 通过 read_skill_resource 工具读取技能所依赖的参考文件
+// 4. 执行脚本（Run scripts）—— 通过 run_skill_script 工具调用子进程执行脚本
+//
+// 环境变量：
+//   OPENAI_ENDPOINT  - API 地址（如 https://api.deepseek.com）
+//   OPENAI_API_KEY   - API Key
+//   OPENAI_MODEL_NAME - 模型名称
+
 using Microsoft.Agents.AI;
+using Microsoft.Extensions.AI;
+using OpenAI;
+using System.ClientModel;
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
-
 
 Console.InputEncoding = Encoding.UTF8;
 Console.OutputEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
 // --- Configuration ---
-string endpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT") ?? throw new InvalidOperationException("AZURE_OPENAI_ENDPOINT is not set.");
-string deploymentName = Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_NAME") ?? "gpt-5.4-mini";
+string endpoint = Environment.GetEnvironmentVariable("OPENAI_ENDPOINT") ?? throw new InvalidOperationException("OPENAI_ENDPOINT is not set.");
+string apikey = Environment.GetEnvironmentVariable("OPENAI_API_KEY") ?? throw new InvalidOperationException("OPENAI_API_KEY is not set.");
+string modelId = Environment.GetEnvironmentVariable("OPENAI_MODEL_NAME") ?? "gpt-5.4-mini";
 
+// --- 从文件中读取技能定义 ---
+string skillsDir = Path.Combine(AppContext.BaseDirectory, "skills", "unit-converter");
 
+// 读取 SKILL.md
+string skillMd = File.ReadAllText(Path.Combine(skillsDir, "SKILL.md"));
 
-var skillsProvider = new AgentSkillsProvider(
-    Path.Combine(AppContext.BaseDirectory, "skills"),
-    RunAsync);
-#pragma warning disable MAAI001
-AIAgent agent = new AIProjectClient(new Uri(endpoint), new DefaultAzureCredential())
-    .AsAIAgent(new ChatClientAgentOptions
+// 读取换算表
+string conversionTableMd = File.ReadAllText(Path.Combine(skillsDir, "references", "conversion-table.md"));
+
+// Python 脚本路径
+string scriptPath = Path.Combine(skillsDir, "scripts", "convert.py");
+
+Console.WriteLine($"已从文件加载技能: {Path.Combine(skillsDir, "SKILL.md")}");
+Console.WriteLine($"已从文件加载换算表: {Path.Combine(skillsDir, "references", "conversion-table.md")}");
+Console.WriteLine($"脚本路径: {scriptPath}");
+
+// --- 基于文件创建技能工具 ---
+// 工具名与 AgentSkillsProvider 的标准名称一致
+
+// 1. load_skill: 返回 SKILL.md 的完整内容
+var loadSkillTool = AIFunctionFactory.Create(
+    () => skillMd,
+    new AIFunctionFactoryOptions
     {
-        Name = "UnitConverterAgent",
-        ChatOptions = new()
+        Name = "load_skill",
+        Description = "加载 unit-converter 技能的详细说明",
+    });
+
+// 2. read_skill_resource: 读取技能依赖的参考文件（如换算表）
+var readResourceTool = AIFunctionFactory.Create(
+    (string path) =>
+    {
+        // path 可能是 "references/conversion-table.md" 或 "conversion-table.md"
+        string fileName = Path.GetFileName(path);
+        string fullPath = Path.Combine(skillsDir, "references", fileName);
+        return File.Exists(fullPath)
+            ? File.ReadAllText(fullPath)
+            : $"错误: 找不到文件 '{path}'";
+    },
+    new AIFunctionFactoryOptions
+    {
+        Name = "read_skill_resource",
+        Description = "读取技能所依赖的参考文件（如换算表），传入文件路径",
+    });
+
+// 3. run_skill_script: 执行 Python 脚本进行单位换算
+var runScriptTool = AIFunctionFactory.Create(
+    async (double value, double factor) =>
+    {
+        Console.WriteLine($"=== 脚本执行开始 ===");
+        Console.WriteLine($"value: {value}, factor: {factor}");
+        var psi = new ProcessStartInfo("python")
         {
-            ModelId = deploymentName,
-            Instructions = "你是一个可以调用工具进行单位转换的助手。",
-        },
-        AIContextProviders = [skillsProvider],
-    })
-    .AsBuilder()
-    .UseToolApproval(new ToolApprovalAgentOptions
-    {
-        // 注意：为了简化演示，本示例会自动批准所有 Skill 工具的调用。
-        // 在实际生产环境中，应在执行脚本之前先向用户请求授权。
-         AutoApprovalRules = [AgentSkillsProvider.AllToolsAutoApprovalRule],
-    })
-    .Build();
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+        };
+        psi.ArgumentList.Add(scriptPath);
+        psi.ArgumentList.Add("--value");
+        psi.ArgumentList.Add(value.ToString());
+        psi.ArgumentList.Add("--factor");
+        psi.ArgumentList.Add(factor.ToString());
 
-// --- Example: Unit conversion ---
-Console.WriteLine("正在使用基于文件的技能进行单位转换");
-Console.WriteLine(new string('-', 60));
-
-AgentResponse response = await agent.RunAsync(
-    "请严格用脚本计算。马拉松（26.2 英里）等于多少公里？另外，75 千克等于多少磅？");
-
-Console.WriteLine($"Agent: {response.Text}");
-
-static async Task<object?> RunAsync(
-        AgentFileSkill skill,
-        AgentFileSkillScript script,
-        JsonElement? arguments,
-        IServiceProvider? serviceProvider,
-        CancellationToken cancellationToken)
-{
-    if (!File.Exists(script.FullPath))
-    {
-        return $"错误: 找不到脚本文件: {script.FullPath}";
-    }
-
-    string extension = Path.GetExtension(script.FullPath);
-    string? interpreter = extension switch
-    {
-        ".py" => "python3",
-        ".js" => "node",
-        ".sh" => "bash",
-        ".ps1" => "pwsh",
-        _ => null,
-    };
-
-    var startInfo = new ProcessStartInfo
-    {
-        RedirectStandardOutput = true,
-        RedirectStandardError = true,
-        UseShellExecute = false,
-        CreateNoWindow = true,
-        WorkingDirectory = Path.GetDirectoryName(script.FullPath) ?? ".",
-    };
-
-    if (interpreter is not null)
-    {
-        startInfo.FileName = interpreter;
-        startInfo.ArgumentList.Add(script.FullPath);
-    }
-    else
-    {
-        startInfo.FileName = script.FullPath;
-    }
-
-    if (arguments is { ValueKind: JsonValueKind.Array } json)
-    {
-        // Positional CLI arguments
-        foreach (var element in json.EnumerateArray())
-        {
-            if (element.ValueKind != JsonValueKind.String)
-            {
-                throw new InvalidOperationException(
-                    $"错误: 文件型技能脚本只接受字符串类型的命令行参数，但收到的 JSON 元素类型为 '{element.ValueKind}'。 " +
-                    "所有数组元素必须是 JSON 字符串。");
-            }
-            startInfo.ArgumentList.Add(element.GetString()!);
-        }
-    }
-    else if (arguments is not null && arguments.Value.ValueKind != JsonValueKind.Null && arguments.Value.ValueKind != JsonValueKind.Undefined)
-    {
-        throw new InvalidOperationException(
-            $"错误: 预期一个 JSON 数组作为命令行参数，但收到的类型为 {arguments.Value.ValueKind}。 " +
-            "文件型技能脚本期望位置参数为 JSON 字符串数组。");
-    }
-
-    Process? process = null;
-    try
-    {
-        process = Process.Start(startInfo);
-        if (process is null)
-        {
-            return $"错误: 无法启动脚本 '{script.Name}' 的进程。";
-        }
-
-        Task<string> outputTask = process.StandardOutput.ReadToEndAsync(cancellationToken);
-        Task<string> errorTask = process.StandardError.ReadToEndAsync(cancellationToken);
-
-        await process.WaitForExitAsync(cancellationToken).ConfigureAwait(false);
-
-        string output = await outputTask.ConfigureAwait(false);
-        string error = await errorTask.ConfigureAwait(false);
+        using var process = Process.Start(psi)!;
+        string output = await process.StandardOutput.ReadToEndAsync();
+        string error = await process.StandardError.ReadToEndAsync();
+        await process.WaitForExitAsync();
 
         if (!string.IsNullOrEmpty(error))
         {
-            output += $"\n标准错误输出:\n{error}";
+            Console.WriteLine("STDERR: " + error);
         }
+        Console.WriteLine("转换结果: " + output);
+        return output.Trim();
+    },
+    new AIFunctionFactoryOptions
+    {
+        Name = "run_skill_script",
+        Description = "执行 convert.py 脚本进行单位转换，传入 value（数值）和 factor（换算系数）",
+    });
 
-        if (process.ExitCode != 0)
+// --- 创建 AI Agent ---
+var openAIClient = new OpenAIClient(
+    new ApiKeyCredential(apikey),
+    new OpenAIClientOptions { Endpoint = new Uri(endpoint) });
+
+var agent = openAIClient
+    .GetChatClient(modelId)
+    .AsIChatClient()
+    .AsAIAgent(
+        new ChatClientAgentOptions
         {
-            output += $"\n脚本以代码 {process.ExitCode} 退出";
-        }
+            Name = "UnitConverterAgent",
+            ChatOptions = new()
+            {
+                Instructions = $"""
+                    你是一个可以调用工具进行单位转换的助手。
 
-        return string.IsNullOrEmpty(output) ? "(无输出)" : output.Trim();
-    }
-    catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                    可用技能：unit-converter（在英里/公里、磅/千克之间进行单位转换）
+
+                    技能定义（来自 skills/unit-converter/SKILL.md）：
+                    ---
+                    {skillMd}
+                    ---
+
+                    换算表（来自 skills/unit-converter/references/conversion-table.md）：
+                    ---
+                    {conversionTableMd}
+                    ---
+
+                    请严格按以下流程操作：
+                    1. 调用 load_skill 加载技能说明
+                    2. 调用 read_skill_resource 读取换算表获取换算系数
+                    3. 调用 run_skill_script 执行 python 脚本进行换算，传入 value 和 factor
+                    4. 直接给出转换结果，并同时标明原单位和目标单位
+                    """,
+                Tools = [loadSkillTool, readResourceTool, runScriptTool],
+            },
+        });
+/*
+ // --- 自动审批所有技能工具的调用 加不加都一样---
+    .AsBuilder()
+    .UseToolApproval(new ToolApprovalAgentOptions
     {
-        // Kill the process on cancellation to avoid leaving orphaned subprocesses.
-        process?.Kill(entireProcessTree: true);
-        throw;
-    }
-    catch (OperationCanceledException)
-    {
-        throw;
-    }
-    catch (Exception ex)
-    {
-        return $"错误: 执行脚本 '{script.Name}' 失败: {ex.Message}";
-    }
-    finally
-    {
-        process?.Dispose();
-    }
+        // 自动审批所有技能工具的调用
+        AutoApprovalRules = [AgentSkillsProvider.AllToolsAutoApprovalRule],
+    })
+    .Build()
+ */
+
+Console.WriteLine(new string('-', 60));
+Console.WriteLine("正在使用基于文件的技能进行单位转换");
+Console.WriteLine(new string('-', 60));
+
+var stringBuilder = new StringBuilder();
+await foreach (var response in agent.RunStreamingAsync("请严格用脚本计算。马拉松（26.2 英里）等于多少公里？另外，75 千克等于多少磅？"))
+{
+    Console.Write(response.Text);
+    stringBuilder.Append(response.Text);
 }
 
-
+Console.WriteLine();
+Console.WriteLine(new string('-', 60));
+Console.WriteLine(stringBuilder.ToString());
+Console.WriteLine("运行结束");

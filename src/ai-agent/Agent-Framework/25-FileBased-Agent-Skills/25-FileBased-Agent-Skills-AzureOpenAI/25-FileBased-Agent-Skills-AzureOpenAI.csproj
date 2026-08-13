@@ -11,12 +11,17 @@
   <ItemGroup>
     <PackageReference Include="Azure.AI.OpenAI" Version="2.9.0-beta.1" />
     <PackageReference Include="Azure.Identity" Version="1.21.0" />
+    <PackageReference Include="Microsoft.Agents.AI" Version="1.15.0" />
+    <PackageReference Include="Microsoft.Agents.AI.Foundry" Version="1.5.0" />
     <PackageReference Include="Microsoft.Agents.AI.OpenAI" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.6" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.6" />
   </ItemGroup>
 
   <ItemGroup>
+	  <None Include="skills\**\*">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
     <None Update="skills\unit-converter\references\conversion-table.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -9,9 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.AI.OpenAI" Version="2.9.0-beta.1" />
-    <PackageReference Include="Azure.Identity" Version="1.21.0" />
-    <PackageReference Include="Microsoft.Agents.AI.OpenAI" Version="1.3.0" />
+    <!-- OpenAI SDK：提供 OpenAIClient / ChatClient -->
+    <!-- ★ 新增：Microsoft.Extensions.AI.OpenAI — 提供 AsIChatClient() 扩展方法
+         将 OpenAI.Chat.ChatClient 转换为 IChatClient 接口 -->
+    <PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="10.8.3" />
+    <!-- Microsoft.Agents.AI.OpenAI：提供 AgentClassSkill / AgentSkillsProvider / ChatClientAgentOptions / AsAIAgent() -->
+    <PackageReference Include="Microsoft.Agents.AI.OpenAI" Version="1.16.0" />
   </ItemGroup>
 
 </Project>
