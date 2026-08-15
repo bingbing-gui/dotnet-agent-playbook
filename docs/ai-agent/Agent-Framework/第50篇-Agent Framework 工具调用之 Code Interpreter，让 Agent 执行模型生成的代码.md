@@ -81,10 +81,14 @@ AIAgent agent = aiProjectClient
 AgentResponse response = await agent.RunAsync($"帮我使用Python脚本统计 {uploadedFile.Id} 文件下不同区域的销售总数,并输出结果");
 ```
 
+图片
+
 
 
 
 ## 免责声明 / 风险与责任说明
+
+如下是来自微软官方的责任声明：
 
 如果您使用 Microsoft Agent Framework 构建与任何第三方服务器、Agent、代码或非 Azure Direct 模型（“第三方系统”）协同运行的应用程序，则由您自行承担风险。根据 Microsoft 产品条款，第三方系统属于非 Microsoft 产品，并受其各自第三方许可条款的约束。您需要对任何使用行为及其相关费用负责。
 
@@ -92,6 +96,12 @@ AgentResponse response = await agent.RunAsync($"帮我使用Python脚本统计 {
 
 您有责任结合自己的具体使用场景，仔细审查和测试使用 Microsoft Agent Framework 构建的应用程序，并做出所有适当的决策和自定义。这包括实施您自己的负责任 AI 缓解措施，例如元提示（metaprompt）、内容筛选器或其他安全系统，并确保您的应用程序满足适当的质量、可靠性、安全性和可信度标准。
 
+
+
+## 总结
+
+Function Call 让 LLM 调用开发者预先编写的函数，而 Code Interpreter 则允许 Agent 根据任务动态生成代码，并交由底层 Provider 在隔离的沙箱环境中执行，因此特别适合数据分析、数学计算和文件处理等场景。
+实际应用中，也应充分评估第三方服务带来的安全与合规风险。
 
 
 
