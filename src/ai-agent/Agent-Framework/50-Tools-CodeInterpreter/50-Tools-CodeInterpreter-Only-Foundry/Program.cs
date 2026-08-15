@@ -62,4 +62,5 @@ foreach (DataContent codeInput in codeInputs)
         """);
 }
 
+await fileClient.DeleteFileAsync(uploadedFile.Id);
 
