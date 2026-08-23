@@ -132,8 +132,6 @@ Console.WriteLine(await agent.RunAsync("总结一下 microsoft/semantic-kernel �
 调用 `RunAsync` 以自然语言触发任务，Agent 结合 MCP 工具与模型完成指令并输出结果。
 
 
-
-
 ## 补充说明：MCP GitHub Server 启动失败排查
 
 如果你遇到下面那问题，说明  MCP GitHub Server 进程没启动成功（npx @modelcontextprotocol/server-github 启动失败），所以
