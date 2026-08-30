@@ -1,0 +1,13 @@
+@AspNetCoreCallMcpServer_HostAddress = http://localhost:5164
+
+GET {{AspNetCoreCallMcpServer_HostAddress}}/api/mcp/configuration
+Accept: application/json
+
+###
+
+POST {{AspNetCoreCallMcpServer_HostAddress}}/api/mcp/chat
+Content-Type: application/json
+
+{
+  "message": "我明天去北京出差，需要带伞吗？"
+}

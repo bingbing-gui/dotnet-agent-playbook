@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/Solution Items/" />
+  <Project Path="AspNetCoreMcpClient/AspNetCoreMcpClient.csproj" />
+  <Project Path="AspNetCoreMcpServer/AspNetCoreMcpServer.csproj" />
+</Solution>

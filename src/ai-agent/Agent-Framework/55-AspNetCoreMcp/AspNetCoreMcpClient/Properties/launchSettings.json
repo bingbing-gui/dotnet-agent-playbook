@@ -1,0 +1,27 @@
+﻿{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5164",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "McpServer__Endpoint": "http://localhost:7049/",
+        "McpServer__TokenEndpoint": "http://localhost:7049/auth/token"
+      }
+    },
+    "https": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:7133;http://localhost:5164",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "McpServer__Endpoint": "https://localhost:7049/",
+        "McpServer__TokenEndpoint": "https://localhost:7049/auth/token"
+      }
+    }
+  }
+}

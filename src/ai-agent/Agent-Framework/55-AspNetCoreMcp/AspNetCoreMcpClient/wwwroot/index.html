@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102a43">
+  <meta name="description" content="基于 ASP.NET Core 与 MCP 的智能天气顾问。">
+  <title>云象 · AI 天气顾问</title>
+  <link rel="stylesheet" href="styles.css?v=20260829-3">
+  <script src="app.js" type="module"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要内容</a>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="云象天气首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" role="img"><path d="M14 35h22a8 8 0 0 0 1-15.9A13 13 0 0 0 12.3 17 9 9 0 0 0 14 35Z"/></svg>
+        </span>
+        <span><strong>云象</strong><small>WEATHER AI</small></span>
+      </a>
+
+      <div class="sidebar-intro">
+        <span class="sidebar-label">智能天气服务</span>
+        <h1>天气，<br>问一句就好。</h1>
+        <p>结合实时气象数据，为通勤、穿衣和户外活动提供清晰建议。</p>
+      </div>
+
+      <div class="sidebar-status">
+        <div class="service-state" title="MCP 服务连接状态">
+          <span class="pulse" aria-hidden="true"></span>
+          <span id="service-state-text">正在检测服务</span>
+        </div>
+        <p>ASP.NET Core · MCP</p>
+      </div>
+    </aside>
+
+    <main id="main-content">
+      <header class="topbar">
+        <div>
+          <p class="overline">AI WEATHER ADVISOR</p>
+          <h2>你好，今天想了解哪里的天气？</h2>
+        </div>
+        <span class="date-badge">实时气象</span>
+      </header>
+
+      <section class="ask-panel" aria-labelledby="ask-title">
+        <div class="ask-copy">
+          <span class="weather-orb" aria-hidden="true">
+            <svg viewBox="0 0 64 64"><circle cx="23" cy="23" r="10"/><path d="M19 48h29a10 10 0 0 0 1-19.9A16 16 0 0 0 18.5 26 11 11 0 0 0 19 48Z"/></svg>
+          </span>
+          <div>
+            <p class="overline">自然语言查询</p>
+            <h2 id="ask-title">向天气顾问提问</h2>
+            <p>描述城市、时间和你的计划，我会调用 MCP 天气工具给出建议。</p>
+          </div>
+        </div>
+
+        <form id="chat-form" class="agent-form">
+          <label class="sr-only" for="message">向天气顾问提问</label>
+          <textarea id="message" rows="4" required placeholder="例如：明天东京会下雨吗？早上通勤需要带伞吗？"></textarea>
+          <div class="agent-actions">
+            <span id="agent-hint">正在检查 AI 服务配置</span>
+            <button id="send-message" type="submit">
+              <span>发送问题</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 14-7-4 14-3-5-7-2Zm7 2 7-9"/></svg>
+            </button>
+          </div>
+        </form>
+
+        <div class="prompt-chips" aria-label="提问示例">
+          <span>可以这样问</span>
+          <button type="button" disabled>今天适合户外运动吗？</button>
+          <button type="button" disabled>明早通勤需要带伞吗？</button>
+          <button type="button" disabled>周末出游怎么穿？</button>
+        </div>
+
+        <div id="agent-response" class="agent-response" hidden>
+          <div class="response-heading"><strong>云象天气顾问</strong><span id="agent-status" role="status" aria-live="polite"></span></div>
+          <pre id="agent-output" tabindex="0"></pre>
+        </div>
+      </section>
+
+      <section class="info-grid" aria-label="服务信息">
+        <article class="info-card capability-card">
+          <p class="overline">SERVICE</p>
+          <h2>一次提问，完整分析</h2>
+          <div class="capabilities">
+            <div><span>01</span><strong>理解问题</strong><p>识别城市、时间与出行意图</p></div>
+            <div><span>02</span><strong>调用工具</strong><p>自动连接 MCP 天气服务</p></div>
+            <div><span>03</span><strong>给出建议</strong><p>将数据转化为行动建议</p></div>
+          </div>
+        </article>
+
+        <aside class="info-card system-card" aria-labelledby="system-title">
+          <div class="card-heading"><div><p class="overline">SYSTEM</p><h2 id="system-title">服务状态</h2></div><span class="secure-mark">安全</span></div>
+          <dl class="system-list">
+            <div><dt>MCP Server</dt><dd><code id="server-endpoint">正在读取…</code></dd></div>
+            <div><dt>天气数据</dt><dd>Open-Meteo</dd></div>
+            <div><dt>AI 模型</dt><dd><code id="model-name">正在读取…</code></dd></div>
+          </dl>
+          <p class="privacy-note"><span aria-hidden="true">✓</span>凭据仅保存在服务端，不会发送到浏览器。</p>
+        </aside>
+      </section>
+
+      <section class="legacy-weather" hidden aria-hidden="true">
+        <form id="weather-form"><input id="city"><button id="query-weather" type="submit">查询</button><button class="city-chip" type="button">北京</button></form>
+        <article class="result-card"><span id="weather-status"></span><div id="weather-output" tabindex="0"></div></article>
+      </section>
+
+      <footer><span>© 2026 云象天气</span><span>Powered by Model Context Protocol</span></footer>
+    </main>
+  </div>
+</body>
+</html>
