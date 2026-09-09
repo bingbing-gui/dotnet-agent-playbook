@@ -9,6 +9,7 @@ const elements = {
   weatherOutput: document.querySelector("#weather-output"),
   weatherStatus: document.querySelector("#weather-status"),
   cityShortcuts: document.querySelectorAll(".city-chip"),
+  quickPrompts: document.querySelectorAll(".quick-prompt"),
   chatForm: document.querySelector("#chat-form"),
   message: document.querySelector("#message"),
   sendMessage: document.querySelector("#send-message"),
@@ -62,11 +63,11 @@ async function loadConfiguration() {
     elements.serviceStateText.textContent = "客户端已就绪";
 
     if (configuration.foundryConfigured) {
-      elements.agentHint.textContent = "Foundry 已配置，可使用自然语言问答";
+      elements.agentHint.textContent = "";
       elements.message.disabled = false;
       elements.sendMessage.disabled = false;
     } else {
-      elements.agentHint.textContent = "未配置 Foundry，当前仅保留聊天模式，请先完成 Foundry 配置";
+      elements.agentHint.textContent = "";
       elements.message.disabled = true;
       elements.sendMessage.disabled = true;
     }
@@ -159,6 +160,19 @@ if (!elements.weatherForm.hidden) {
 if (!elements.weatherForm.hidden) {
   elements.weatherForm.addEventListener("submit", queryWeather);
 }
+
+for (const quickPrompt of elements.quickPrompts) {
+  quickPrompt.addEventListener("click", () => {
+    const prompt = quickPrompt.dataset.prompt?.trim();
+    if (!prompt) {
+      return;
+    }
+
+    elements.message.value = prompt;
+    elements.message.focus();
+  });
+}
+
 elements.chatForm.addEventListener("submit", askAgent);
 
 await loadConfiguration();

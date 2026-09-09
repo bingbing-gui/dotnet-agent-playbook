@@ -6,8 +6,11 @@ using Quartz.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+
 builder.Services.AddOpenApi();
+
 builder.Services.AddSignalR();
+
 builder.Services.AddQuartz(options =>
 {
     var demoTimerJobKey = new JobKey("demo-timer-job");
