@@ -28,6 +28,22 @@ AIAgent agent = aiProjectClient.AsAIAgent(deploymentName,
 
 AgentResponse response = await agent.RunAsync("今天东京的天气怎么样? ");
 
+ChatClientAgentOptions agentOptions = new()
+{
+    ChatOptions = new ChatOptions
+    {
+       
+    }
+};
+
+ChatClientAgentRunOptions runOptions = new()
+{
+    ChatOptions=new ChatOptions 
+    { 
+         
+    }
+};
+
 Console.WriteLine($"Response: {response.Text}");
 
 foreach (AIAnnotation annotation in response.Messages.SelectMany(m => m.Contents).SelectMany(c => c.Annotations ?? []))

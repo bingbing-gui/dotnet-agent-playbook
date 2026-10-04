@@ -82,9 +82,7 @@ AIAgent foundryAgent = new AIProjectClient(
         name: "SpaceNovelWriter",
         instructions: "你是一个帮助人们查找信息的 AI 助手。",
         tools: [AIFunctionFactory.Create(GetDateTime, name: nameof(GetDateTime))],
-         clientFactory: (chatClient) => chatClient
-        .AsBuilder()
-        .Use(getResponseFunc: ChatClientMiddleware, getStreamingResponseFunc: null)
+        clientFactory: (chatClient) => chatClient.AsBuilder().Use(getResponseFunc: ChatClientMiddleware, getStreamingResponseFunc: null)
         .Build());
 
 var foundryMiddlewareEnabledAgent = foundryAgent

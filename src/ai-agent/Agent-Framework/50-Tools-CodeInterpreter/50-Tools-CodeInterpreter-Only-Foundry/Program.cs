@@ -37,6 +37,7 @@ AIAgent agent = aiProjectClient
         name: AgentName,
         tools: [new HostedCodeInterpreterTool() { Inputs = [new HostedFileContent(uploadedFile.Id)] }]);
 
+
 AgentResponse response = await agent.RunAsync($"帮我使用Python脚本统计 {uploadedFile.Id} 文件下不同区域的销售总数,并输出结果");
 
 

@@ -57,6 +57,8 @@ ChatMessage message2 = new(ChatRole.User, [
 ]);
 var session2 = await foundryAgent.CreateSessionAsync();
 
+
+
 Console.WriteLine(await foundryAgent.RunAsync(message2, session2));
 
 //await foreach (var update in foundryAgent.RunStreamingAsync(message2, session2))
