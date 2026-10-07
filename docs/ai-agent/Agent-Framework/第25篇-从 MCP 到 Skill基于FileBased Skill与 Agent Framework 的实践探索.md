@@ -105,6 +105,17 @@ Skill 正是在这个缺口上出现的。它不去替代 MCP，而是补上一�
 
 ## Agent Framework 里使用Skill
 
+> 补充说明：前面的很多示例默认使用的是 Azure OpenAI / Foundry Provider，这是因为官方样例大多围绕 Azure 主机场景展开。  
+> 但如果你是在实际项目里直接使用 OpenAI 兼容接口（例如 DeepSeek API）来创建通用型 Agent，那么**大部分普通 Agent 用法依然是可以复用的**，例如对话、流式输出、函数调用、结构化输出等。  
+> 当前差异主要集中在 **Skill 场景**：为了避免把 Azure 配置和第三方 Provider 配置混在一起，仓库已经把 Skill 相关示例单独拆成了不同 Provider 的项目分支。  
+> 对应本篇的 FileBased Skill，可直接参考：
+>
+> - `src/ai-agent/Agent-Framework/25-FileBased-Agent-Skills/25-FileBased-Agent-Skills-AzureOpenAI`
+> - `src/ai-agent/Agent-Framework/25-FileBased-Agent-Skills/25-FileBased-Agent-Skills-DeepSeek`
+> - `src/ai-agent/Agent-Framework/25-FileBased-Agent-Skills/25-FileBased-Agent-Skills-Foundry`
+>
+> 如果你关心的是“除了 Skill 之外别的能不能用”，答案是：**通常可以**。Skill 这里之所以单独拆项目，是为了把不同 Provider 的接入方式讲清楚，尤其是方便没有 Azure 主机、直接调用 DeepSeek/OpenAI 兼容 API 的同学上手。
+
 Agent Framework 给我们提供了几种使用Agent的方式。今天我们主要介绍基于文件系统使用Skill的方式。
 
 首先我们需要引用如下包：

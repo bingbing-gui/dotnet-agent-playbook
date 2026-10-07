@@ -1,5 +1,13 @@
 前面我们介绍了基于Code-Defined Skill的Agent实现，今天我们来介绍基于Class-Based Skill的Agent实现。Class-Based Skill是把我们的Skill放在一个类里面实现的，这个类需要继承AgentSkill这个基类。本质是一样的，只是组织代码的方式不一样。都是基于AgentSkill这个基类来实现的。
 
+> Provider 说明：这里的讲解仍然优先采用 Azure OpenAI 的代码形式，主要是为了把 Class-Based Skill 的定义方式讲透。  
+> 如果你的实际运行环境是 DeepSeek 这类 OpenAI 兼容 Provider，那么通用型 Agent 的大多数能力仍然可以照常使用；  
+> Skill 示例则建议直接参考仓库中已经拆分好的 Provider 版本：
+>
+> - `src/ai-agent/Agent-Framework/27-ClassBased-Agent-Skills/27-ClassBased-Agent-Skills-AzureOpenAI`
+> - `src/ai-agent/Agent-Framework/27-ClassBased-Agent-Skills/27-ClassBased-Agent-Skills-DeepSeek`
+> - `src/ai-agent/Agent-Framework/27-ClassBased-Agent-Skills/27-ClassBased-Agent-Skills-Foundry`
+
 
 首先我们创建一个控制台的项目，然后引入依赖的包
 

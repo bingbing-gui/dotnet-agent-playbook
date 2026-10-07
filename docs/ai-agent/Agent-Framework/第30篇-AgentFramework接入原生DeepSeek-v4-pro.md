@@ -36,6 +36,16 @@ DeepSeek 官方文档也说明，OpenAI base URL 为 `https://api.deepseek.com`�
 
 OpenAIClient 的接入非常简单，我们只需要在创建 OpenAIClient 实例时，指定 Endpoint 为 DeepSeek 的 API 地址即可。然后我们就可以像平常一样使用 ChatClient 来调用 deepseek-v4-pro 模型了。
 
+这也意味着：如果你只是想做一个“通用型 Agent”，不依赖 Azure 主机，很多前面基于 `OpenAIClient` / `ChatClient` / `AsAIAgent()` 的示例思路都可以迁移到 DeepSeek 这样的 OpenAI 兼容 Provider 上。  
+例如多轮对话、流式输出、函数调用、结构化输出、工作流编排等场景，原则上都可以沿用相同模式。
+
+不过 **Skill** 是一个需要单独说明的点：仓库里 Skill 相关章节（第 25～28 篇）已经专门拆出了 DeepSeek 对应项目，目的是把 Provider 差异隔离开，避免大家误以为必须先有 Azure 主机才能实践 Skill。也就是说，当前仓库不是“Skill 不支持”，而是**Skill 已经单独按 Provider 做了示例拆分**，DeepSeek 用户可直接查看这些项目：
+
+- `src/ai-agent/Agent-Framework/25-FileBased-Agent-Skills/25-FileBased-Agent-Skills-DeepSeek`
+- `src/ai-agent/Agent-Framework/26-CodeDefined-Agent-Skills/26-CodeDefined-Agent-Skills-DeepSeek`
+- `src/ai-agent/Agent-Framework/27-ClassBased-Agent-Skills/27-ClassBased-Agent-Skills-DeepSeek`
+- `src/ai-agent/Agent-Framework/28-Mixed-Agent-Skills/28-Mixed-Agent-Skills-DeepSeek`
+
 ```csharp
 var client = new OpenAIClient(
     new ApiKeyCredential("sk-xxxxxx"),
@@ -84,6 +94,5 @@ Console.WriteLine(result);
 ## 总结
 
 在前面的内容中，我们尚未对 `OpenAIClient` 和 `AnthropicClient` 的使用进行示例说明。本节将以 DeepSeek 为例，演示其在 OpenAI 协议和 Anthropic 协议下的两种接入方式。DeepSeek 这一波可以说是“一箭双雕”：既兼容 OpenAI 协议，又支持 Anthropic 接口。
-
 
 
