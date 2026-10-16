@@ -62,6 +62,8 @@ AIAgent agent = aiProjectClient.AsAIAgent(deploymentName,
     name: "FileSearchAgent-RAPI",
     tools: [new HostedFileSearchTool() { Inputs = [new HostedVectorStoreContent(vectorStoreId)] }]);
 
+
+
 // 运行代理以搜索文件内容。
 Console.WriteLine("\n--- 运行文件搜索代理 ---");
 AgentResponse response = await agent.RunAsync("谁是最年轻的员工？");

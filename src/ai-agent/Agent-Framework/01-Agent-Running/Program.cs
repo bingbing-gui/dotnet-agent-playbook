@@ -7,6 +7,7 @@ using Azure.AI.Projects;
 using Azure.Identity;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
+using Microsoft.Identity.Client;
 using OpenAI;
 using OpenAI.Chat;
 using System.Text;
@@ -41,6 +42,32 @@ AIAgent foundryAgent = new AIProjectClient(new Uri(endpoint), new DefaultAzureCr
 
 Console.WriteLine(string.Concat(Enumerable.Repeat('-', 120)));
 Console.WriteLine(await foundryAgent.RunAsync("给我讲一个发生在茶馆里的段子，轻松一点的那种。"));
+
+
+AgentResponse response = await foundryAgent.RunAsync("给我讲一个发生在茶馆里的段子，轻松一点的那种。");
+
+foreach (Microsoft.Extensions.AI.ChatMessage message  in response.Messages)
+{
+    foreach (AIContent content in message.Contents)
+    {
+        switch (content)
+        {
+            case TextContent text:
+                Console.WriteLine(text.Text);
+                break;
+
+            case DataContent data
+                when data.MediaType.StartsWith("image/"):
+                // 保存二进制数据，或者交给 UI 显示
+                break;
+
+            case UriContent uri
+                when uri.MediaType?.StartsWith("image/") == true:
+                // 在 UI 中加载图片 URI
+                break;
+        }
+    }
+}
 
 #endregion
 

@@ -8,6 +8,7 @@
 using Azure.AI.OpenAI;
 using Azure.Identity;
 using Microsoft.Agents.AI;
+using Microsoft.Agents.AI.Compaction;
 using Microsoft.Extensions.AI;
 using System.Text;
 using ChatMessage = Microsoft.Extensions.AI.ChatMessage;
