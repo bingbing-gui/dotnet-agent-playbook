@@ -2,27 +2,28 @@
 
 // 这个例子展示了如何使用 TextSearchProvider 为 AI 代理添加检索增强生成 (RAG) 功能。
 // 该示例使用了一个内存向量存储，可以很容易地替换为实现 Microsoft.Extensions.VectorData 抽象的任何其他向量存储。
+
 // TextSearchProvider 在每次模型调用之前通过 TextSearchStore 对向量存储运行搜索，并将结果注入模型上下文。
 // TextSearchStore 是一个示例存储实现，它硬编码了存储模式，并使用向量存储来存储和检索文档。
 
-
-using AIContextProvider.TextSearchProvider;
 using Azure.AI.Projects;
+using Azure.AI.Extensions.OpenAI;
 using Azure.Identity;
 using CommunityToolkit.VectorData.InMemory;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.VectorData;
+using System.Text;
 
-var endpoint = Environment.GetEnvironmentVariable("FOUNDRY_PROJECT_ENDPOINT") ?? throw new InvalidOperationException("FOUNDRY_PROJECT_ENDPOINT is not set.");
+
+Console.InputEncoding = Encoding.UTF8;
+Console.OutputEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+
+var endpoint = "https://bingb-mmwu7a7m-eastus2.services.ai.azure.com";// Environment.GetEnvironmentVariable("FOUNDRY_PROJECT_ENDPOINT") ?? throw new InvalidOperationException("FOUNDRY_PROJECT_ENDPOINT is not set.");
 var deploymentName = Environment.GetEnvironmentVariable("FOUNDRY_MODEL") ?? "gpt-5.4-mini";
-var embeddingDeploymentName = Environment.GetEnvironmentVariable("FOUNDRY_EMBEDDING_MODEL") ?? "text-embedding-3-large";
+var embeddingDeploymentName = "text-embedding-3-large";// Environment.GetEnvironmentVariable("FOUNDRY_EMBEDDING_MODEL") ?? "text-embedding-3-large";
 
-
-AIProjectClient aiProjectClient = new(
-    new Uri(endpoint),
-    new DefaultAzureCredential());
-
+AIProjectClient aiProjectClient = new(new Uri(endpoint), new DefaultAzureCredential());
 
 VectorStore vectorStore = new InMemoryVectorStore(new()
 {
@@ -30,7 +31,6 @@ VectorStore vectorStore = new InMemoryVectorStore(new()
 });
 
 TextSearchStore textSearchStore = new(vectorStore, "product-and-policy-info", 3072);
-
 
 // 上传示例文档到存储中。
 await textSearchStore.UpsertDocumentsAsync(GetSampleDocuments());
@@ -54,17 +54,21 @@ TextSearchProviderOptions textSearchOptions = new()
     SearchTime = TextSearchProviderOptions.TextSearchBehavior.BeforeAIInvoke,
 };
 
+#pragma warning disable MAAI001, MEAI001
 AIAgent agent = aiProjectClient
+    .GetProjectOpenAIClient()
+    .GetProjectResponsesClient()
+    .AsIChatClientWithStoredOutputDisabled(deploymentName)
     .AsAIAgent(new ChatClientAgentOptions
     {
         ChatOptions = new() { ModelId = deploymentName, Instructions = "你是一个有帮助的 Contoso Outdoors 支持专家。使用提供的上下文回答问题，并在可用时引用源文档。" },
-        
         AIContextProviders = [new TextSearchProvider(SearchAdapterAsync, textSearchOptions)],
         ChatHistoryProvider = new InMemoryChatHistoryProvider(new InMemoryChatHistoryProviderOptions
         {
             StorageInputRequestMessageFilter = messages => messages.Where(m => m.GetAgentRequestMessageSourceType() != AgentRequestMessageSourceType.AIContextProvider && m.GetAgentRequestMessageSourceType() != AgentRequestMessageSourceType.ChatHistory)
         }),
     });
+#pragma warning restore MAAI001, MEAI001
 
 AgentSession session = await agent.CreateSessionAsync();
 

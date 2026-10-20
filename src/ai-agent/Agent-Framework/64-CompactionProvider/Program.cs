@@ -10,13 +10,16 @@
 //   3. SlidingWindowCompactionStrategy——仅保留最近 N 个用户轮次
 //   4. TruncationCompactionStrategy——紧急情况下的令牌预算保障措施
 
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using Azure.AI.Projects;
 using Azure.Identity;
 using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Compaction;
 using Microsoft.Extensions.AI;
+using System.ComponentModel;
+using System.Text;
+
+Console.InputEncoding = Encoding.UTF8;
+Console.OutputEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
 var endpoint = Environment.GetEnvironmentVariable("FOUNDRY_PROJECT_ENDPOINT") ?? throw new InvalidOperationException("FOUNDRY_PROJECT_ENDPOINT is not set.");
 var deploymentName = Environment.GetEnvironmentVariable("FOUNDRY_MODEL") ?? "gpt-5.4-mini";
@@ -28,10 +31,12 @@ IChatClient agentChatClient = aiProjectClient
     .GetProjectOpenAIClient()
     .GetResponsesClient()
     .AsIChatClient(deploymentName);
+
 IChatClient summarizerChatClient = aiProjectClient
     .GetProjectOpenAIClient()
     .GetResponsesClient()
     .AsIChatClient(deploymentName);
+
 #pragma warning restore OPENAI001
 
 // 定义一个可供代理使用的工具，以便观察工具结果压缩的实际效果。
@@ -44,7 +49,6 @@ static string LookupPrice([Description("要查找的产品名称。")] string pr
         "鼠标" => "鼠标 $29.99.",
         _ => $"抱歉，我没有 '{productName}' 的定价信息。"
     };
-
 #pragma warning disable MAAI001
 // 为各个策略配置压缩管道
 PipelineCompactionStrategy compactionPipeline =
@@ -73,8 +77,8 @@ AIAgent agent =
                     Instructions =
                         """
                         你是一名乐于助人但较为健谈的购物助手。
-                                               请帮助用户查询价格并比较产品。
-                                               对于每个价格问题，你都必须使用 LookupPrice 工具，
+                        请帮助用户查询价格并比较产品。
+                        对于每个价格问题，你都必须使用 LookupPrice 工具，
                                                绝不能依靠记忆回答价格问题。
                                                回复时请务必提供充分详细的说明，并在不过分夸张的前提下
                                                尽可能完整地进行描述。
