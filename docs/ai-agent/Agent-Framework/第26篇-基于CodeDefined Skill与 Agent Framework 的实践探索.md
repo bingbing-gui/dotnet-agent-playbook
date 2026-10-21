@@ -7,6 +7,15 @@
 - **File-Based**：用 SKILL.md + 脚本 + 资源文件
 - **Code-Defined**：全部写在代码里
 
+> Provider 说明：本篇正文继续以 Azure OpenAI 的写法来说明 Code-Defined Skill 的核心结构。  
+> 如果你没有 Azure 主机，而是直接通过 `OpenAIClient` 连接 DeepSeek 这类 OpenAI 兼容 API，可以继续使用通用 Agent 的大多数能力；  
+> 只是到了 Skill 示例这里，仓库把不同 Provider 拆成了独立项目，便于分别运行和对照。  
+> 本篇对应的代码请优先查看：
+>
+> - `src/ai-agent/Agent-Framework/26-CodeDefined-Agent-Skills/26-CodeDefined-Agent-Skills-AzureOpenAI`
+> - `src/ai-agent/Agent-Framework/26-CodeDefined-Agent-Skills/26-CodeDefined-Agent-Skills-DeepSeek`
+> - `src/ai-agent/Agent-Framework/26-CodeDefined-Agent-Skills/26-CodeDefined-Agent-Skills-Foundry`
+
 ## 1. 创建项目 + 安装包
 
 先建一个控制台项目，然后把依赖装上：
