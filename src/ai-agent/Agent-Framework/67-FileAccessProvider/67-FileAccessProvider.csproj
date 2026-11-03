@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>_67_FileAccessProvider</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.21.0" />
+    <PackageReference Include="Microsoft.Agents.AI.Foundry" Version="1.26.0-preview.261023.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="sales.csv"
+          CopyToOutputDirectory="PreserveNewest"
+          TargetPath="working\sales.csv" />
+  </ItemGroup>
+
+</Project>

@@ -8,6 +8,7 @@ using Azure.AI.Projects;
 using Azure.Identity;
 using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Hyperlight;
+using Microsoft.Extensions.AI;
 using System.Text;
 
 Console.InputEncoding = Encoding.UTF8;
