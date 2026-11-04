@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PDF 文档解析 Demo</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <div class="logo" aria-hidden="true">D</div>
+            <div><strong>Document Intelligence</strong><span>Azure PDF 解析 Demo</span></div>
+            <div class="tag">prebuilt-layout</div>
+        </div>
+    </header>
+    <main>
+        <div class="intro">
+            <p class="eyebrow">DOCUMENT AI / DEMO</p>
+            <h1>让 PDF 内容，一目了然</h1>
+            <p>上传 PDF，提取文字段落和表格，快速了解 Azure 文档解析的效果。</p>
+        </div>
+        <div class="layout">
+            <section class="card upload-card" aria-labelledby="uploadTitle">
+                <div class="section-heading"><span class="number">01</span><div><h2 id="uploadTitle">上传文档</h2><p>选择一份需要解析的 PDF</p></div></div>
+                <form id="uploadForm">
+                    <label class="upload-zone" for="pdfFile">
+                        <span class="upload-icon" aria-hidden="true">↑</span>
+                        <strong>选择 PDF 文件</strong>
+                        <span>仅支持 PDF，最大 10 MB</span>
+                        <input id="pdfFile" class="file-input" type="file" accept=".pdf,application/pdf">
+                    </label>
+                    <p id="fileInfo" class="file-info" aria-live="polite">请选择 PDF 文件</p>
+                    <button id="analyzeButton" type="submit">开始解析 <span aria-hidden="true">→</span></button>
+                </form>
+                <div class="notice"><strong>使用前请注意</strong><p>文件会发送至配置的 Azure Document Intelligence 资源。请使用脱敏文件，并注意服务可能产生费用。</p></div>
+            </section>
+            <section class="card result-card" aria-labelledby="resultTitle">
+                <div class="section-heading"><span class="number">02</span><div><h2 id="resultTitle">解析结果</h2><p>查看处理过程和识别内容</p></div></div>
+                <div class="process">
+                    <div class="process-header"><strong>处理进度</strong><span class="live">LIVE</span></div>
+                    <div class="steps">
+                        <span id="uploadStep" data-state="pending"><i>1</i>上传文件</span>
+                        <span id="analyzeStep" data-state="pending"><i>2</i>等待解析</span>
+                        <span id="completeStep" data-state="pending"><i>3</i>完成</span>
+                    </div>
+                    <div class="progress-track" aria-hidden="true"><div id="progressBar"></div></div>
+                    <p id="statusText" role="status" aria-live="polite">选择 PDF 后点击“开始解析”。</p>
+                    <p class="process-note">上传完成后显示等待状态；Azure 不提供实时解析百分比。</p>
+                </div>
+                <div id="result" class="result" hidden>
+                    <div class="result-head"><h3>识别内容</h3><span id="resultSummary"></span></div>
+                    <h4>文字段落</h4>
+                    <div id="paragraphs" class="paragraphs"></div>
+                    <div id="tables" class="tables"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+    <footer>ASP.NET Core + Azure AI Document Intelligence</footer>
+</body>
+</html>

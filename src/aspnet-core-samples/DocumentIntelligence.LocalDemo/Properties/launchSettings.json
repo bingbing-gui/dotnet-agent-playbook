@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "DocumentIntelligence.LocalDemo": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:56720;http://localhost:56721"
+    }
+  }
+}
