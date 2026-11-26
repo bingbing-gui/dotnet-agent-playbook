@@ -1,6 +1,14 @@
 我们在前面的文章中介绍了FileBased、CodeBased和ClassBased三种不同的技能实现方式，并且在Agent Framework中也提供了相应的支持。
 在Agent Framework中，我们可以通过组合不同类型的技能来让一个 Agent 同时具备多种能力。这一节将介绍如何在Agent Framework中使用FileBased、CodeBased和ClassBased技能，例如：
 
+> Provider 说明：组合 Skill 的思路与 Provider 无关，但具体接入代码会因为 Azure OpenAI、Foundry、DeepSeek 等 Provider 而略有差别。  
+> 因此仓库中对 Skill 相关章节采用了“同一主题、拆分不同 Provider 项目”的方式。  
+> 如果你没有 Azure 主机，直接使用 DeepSeek API，也可以参考对应的拆分项目继续实践：
+>
+> - `src/ai-agent/Agent-Framework/28-Mixed-Agent-Skills/28-Mixed-Agent-Skills-AzureOpenAI`
+> - `src/ai-agent/Agent-Framework/28-Mixed-Agent-Skills/28-Mixed-Agent-Skills-DeepSeek`
+> - `src/ai-agent/Agent-Framework/28-Mixed-Agent-Skills/28-Mixed-Agent-Skills-Foundry`
+
 - 电商系统中的单位换算（重量 / 体积）
 - 国际化应用中的温度转换
 - 数据分析中的多单位统一处理
@@ -96,5 +104,4 @@ tupian
 通过这种方式，Agent 不再只是单一能力的工具，而是可以根据用户问题，自动选择并调用不同 Skill 来完成任务。
 
 随着 Skill 的不断扩展（HTTP、数据库、AI 等），Agent 的能力也会随之增强，随着 Skill 的不断扩展（HTTP、数据库、AI 等），Agent 的能力也会持续增强，能够处理更加复杂的任务。
-
 
